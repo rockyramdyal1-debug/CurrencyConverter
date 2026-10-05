@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:CurrencyConverter.Views"
+             x:Class="CurrencyConverter.MainPage"
+             Title="Currency Converter"
+             BackgroundColor="#FFFFFF">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="24,22"
+                                 Spacing="24"
+                                 MaximumWidthRequest="1160"
+                                 HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="*,Auto"
+                  RowDefinitions="Auto,Auto"
+                  ColumnSpacing="16">
+                <Label Grid.Row="0"
+                       Text="LIVE RATES"
+                       FontSize="12"
+                       FontAttributes="Bold"
+                       TextColor="#53627A"
+                       CharacterSpacing="1.4" />
+                <Label Grid.Row="1"
+                       Text="Currency Converter"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       TextColor="#17243A"
+                       Margin="0,4,0,0" />
+                <Button Grid.Column="1"
+                        Grid.RowSpan="2"
+                        Text="↻  Refresh rates"
+                        Command="{Binding RefreshRatesCommand}"
+                        BackgroundColor="#F2F5FA"
+                        TextColor="#29446E"
+                        CornerRadius="10"
+                        VerticalOptions="Center"
+                        Padding="16,10" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="#315FDB"
+                               HorizontalOptions="Center" />
+
+            <!-- Main converter -->
+            <Border BackgroundColor="White"
+                    Stroke="#D9DEE7"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4"
+                    Padding="24">
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="{Binding PairHeading}"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#17243A" />
+                    <Label Text="Enter an amount and choose any available fiat or crypto pair."
+                           FontSize="14"
+                           TextColor="#66738A" />
+
+                    <Grid ColumnDefinitions="*,Auto,*"
+                          ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="6">
+                            <Label Text="Amount"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#53627A" />
+                            <Border BackgroundColor="White"
+                                    Stroke="#BFC8D6"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 4"
+                                    Padding="12,2">
+                                <Entry Text="{Binding Amount, Mode=TwoWay}"
+                                       Keyboard="Numeric"
+                                       FontSize="22"
+                                       TextColor="#17243A"
+                                       Placeholder="1" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="1"
+                                Text="⇄"
+                                Command="{Binding SwapCurrenciesCommand}"
+                                BackgroundColor="#F2F5FA"
+                                TextColor="#315FDB"
+                                FontSize="20"
+                                CornerRadius="24"
+                                WidthRequest="48"
+                                HeightRequest="48"
+                                VerticalOptions="End"
+                                Margin="0,0,0,2" />
+
+                        <VerticalStackLayout Grid.Column="2" Spacing="6">
+                            <Label Text="Converted amount"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#53627A" />
+                            <Border BackgroundColor="#F7F9FC"
+                                    Stroke="#BFC8D6"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 4"
+                                    Padding="12,2">
+                                <Label Text="{Binding ConvertedAmountText}"
+                                       FontSize="22"
+                                       TextColor="#17243A"
+                                       VerticalOptions="Center"
+                                       LineBreakMode="TailTruncation"
+                                       HeightRequest="50" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto,*"
+                          ColumnSpacing="12">
+                        <Border Grid.Column="0"
+                                Stroke="#BFC8D6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6"
+                                Padding="10,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenFromCurrencySelectorCommand}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="9">
+                                <Grid WidthRequest="30" HeightRequest="30">
+                                    <Border IsVisible="{Binding SelectedFrom.IsCrypto}"
+                                            BackgroundColor="{Binding SelectedFrom.CryptoBadgeColor}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 15"
+                                            WidthRequest="30"
+                                            HeightRequest="30">
+                                        <Label Text="{Binding SelectedFrom.CryptoSymbol}"
+                                               TextColor="White"
+                                               FontSize="17"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Border>
+                                    <Label IsVisible="{Binding SelectedFrom.HasNoCountryFlagImage}"
+                                           Text="{Binding SelectedFrom.CountryFlag}"
+                                           FontFamily="Segoe UI Emoji"
+                                           FontSize="23"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                    <Image IsVisible="{Binding SelectedFrom.IsFiat}"
+                                           Source="{Binding SelectedFrom.CountryFlagImageUrl}"
+                                           Aspect="AspectFit"
+                                           WidthRequest="30"
+                                           HeightRequest="22" />
+                                </Grid>
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="0"
+                                                     VerticalOptions="Center">
+                                    <Label Text="{Binding SelectedFrom.Code}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A" />
+                                    <Label Text="{Binding SelectedFrom.CurrencyLabel}"
+                                           FontSize="11"
+                                           TextColor="#66738A"
+                                           LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Button Grid.ColumnSpan="2"
+                                        Text=""
+                                        BackgroundColor="Transparent"
+                                        Command="{Binding OpenFromCurrencySelectorCommand}" />
+                            </Grid>
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="TO"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               TextColor="#8994A5"
+                               VerticalOptions="Center" />
+                        <Border Grid.Column="2"
+                                Stroke="#BFC8D6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 6"
+                                Padding="10,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenToCurrencySelectorCommand}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*"
+                                  ColumnSpacing="9">
+                                <Grid WidthRequest="30" HeightRequest="30">
+                                    <Border IsVisible="{Binding SelectedTo.IsCrypto}"
+                                            BackgroundColor="{Binding SelectedTo.CryptoBadgeColor}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 15"
+                                            WidthRequest="30"
+                                            HeightRequest="30">
+                                        <Label Text="{Binding SelectedTo.CryptoSymbol}"
+                                               TextColor="White"
+                                               FontSize="17"
+                                               FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                    </Border>
+                                    <Label IsVisible="{Binding SelectedTo.HasNoCountryFlagImage}"
+                                           Text="{Binding SelectedTo.CountryFlag}"
+                                           FontFamily="Segoe UI Emoji"
+                                           FontSize="23"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center" />
+                                    <Image IsVisible="{Binding SelectedTo.IsFiat}"
+                                           Source="{Binding SelectedTo.CountryFlagImageUrl}"
+                                           Aspect="AspectFit"
+                                           WidthRequest="30"
+                                           HeightRequest="22" />
+                                </Grid>
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="0"
+                                                     VerticalOptions="Center">
+                                    <Label Text="{Binding SelectedTo.Code}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A" />
+                                    <Label Text="{Binding SelectedTo.CurrencyLabel}"
+                                           FontSize="11"
+                                           TextColor="#66738A"
+                                           LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Button Grid.ColumnSpan="2"
+                                        Text=""
+                                        BackgroundColor="Transparent"
+                                        Command="{Binding OpenToCurrencySelectorCommand}" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Border BackgroundColor="#F2F6FF"
+                            Stroke="Transparent"
+                            StrokeShape="RoundRectangle 4"
+                            Padding="14,12">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="INDICATIVE MID-MARKET RATE"
+                                   FontSize="11"
+                                   FontAttributes="Bold"
+                                   TextColor="#536B9C"
+                                   CharacterSpacing="1" />
+                            <Label Text="{Binding RateSummary}"
+                                   FontSize="17"
+                                   FontAttributes="Bold"
+                                   TextColor="#213A68" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="#A12A37"
+                           IsVisible="{Binding HasError}"
+                           FontSize="13" />
+                    <Label Text="These rates are indicative mid-market values; bid and ask prices are not supplied by the current rate feeds."
+                           TextColor="#788496"
+                           FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Observed rate chart and range statistics -->
+            <Border BackgroundColor="White"
+                    Stroke="#D9DEE7"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4"
+                    Padding="20">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Rate trend"
+                               FontSize="21"
+                               FontAttributes="Bold"
+                               TextColor="#17243A" />
+                        <HorizontalStackLayout Grid.Column="1" Spacing="4">
+                            <Button Text="30D" Command="{Binding SetChartPeriodCommand}" CommandParameter="30" Padding="10,5" CornerRadius="4" BackgroundColor="{Binding Period30Background}" TextColor="{Binding Period30Foreground}" />
+                            <Button Text="60D" Command="{Binding SetChartPeriodCommand}" CommandParameter="60" Padding="10,5" CornerRadius="4" BackgroundColor="{Binding Period60Background}" TextColor="{Binding Period60Foreground}" />
+                            <Button Text="90D" Command="{Binding SetChartPeriodCommand}" CommandParameter="90" Padding="10,5" CornerRadius="4" BackgroundColor="{Binding Period90Background}" TextColor="{Binding Period90Foreground}" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                    <Label Text="{Binding ChartRangeLabel}"
+                           FontSize="12"
+                           TextColor="#65738A" />
+                    <Grid ColumnDefinitions="Auto,*"
+                          ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding ChartMaximum}"
+                                   FontSize="11"
+                                   TextColor="#65738A" />
+                            <Label Text="{Binding ChartMiddle}"
+                                   FontSize="11"
+                                   TextColor="#65738A"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding ChartMinimum}"
+                                   FontSize="11"
+                                   TextColor="#65738A"
+                                   VerticalOptions="End" />
+                        </VerticalStackLayout>
+                        <GraphicsView x:Name="RateTrendGraph"
+                                      Grid.Column="1"
+                                      HeightRequest="180"
+                                      Drawable="{Binding ChartDrawable}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*"
+                          Margin="48,0,0,0">
+                        <Label Text="{Binding ChartStartLabel}"
+                               FontSize="11"
+                               TextColor="#65738A" />
+                        <Label Grid.Column="1"
+                               Text="Latest"
+                               FontSize="11"
+                               TextColor="#65738A"
+                               HorizontalTextAlignment="End" />
+                    </Grid>
+                    <Label Text="{Binding HistoryMessage}"
+                           FontSize="12"
+                           TextColor="#65738A" />
+                    <Grid ColumnDefinitions="*,*,*"
+                          ColumnSpacing="8">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="MIN"
+                                   FontSize="10"
+                                   TextColor="#65738A" />
+                            <Label Text="{Binding HistoryMinimum}"
+                                   FontSize="14"
+                                   TextColor="#17243A" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="AVG"
+                                   FontSize="10"
+                                   TextColor="#65738A" />
+                            <Label Text="{Binding HistoryAverage}"
+                                   FontSize="14"
+                                   TextColor="#17243A" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="4">
+                            <Label Text="MAX"
+                                   FontSize="10"
+                                   TextColor="#65738A" />
+                            <Label Text="{Binding HistoryMaximum}"
+                                   FontSize="14"
+                                   TextColor="#17243A" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Label Text="Historical daily rates are loaded from the selected currency providers. Bid/ask prices are not supplied by the current providers."
+                           FontSize="11"
+                           TextColor="#788496" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Popular conversion scale in both directions -->
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="16">
+                <Border BackgroundColor="White"
+                        Stroke="#D9DEE7"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 4"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding ForwardTableHeading}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#17243A" />
+                        <Grid ColumnDefinitions="*,*">
+                            <Label Text="{Binding FromCodeHeader}" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                            <Label Grid.Column="1" Text="{Binding ToCodeHeader}" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#D9DEE7" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ForwardConversions}" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,*" Padding="0,6">
+                                        <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding FromCurrency}" />
+                                            <Button Text="{Binding AmountLabel}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectConversionCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="#315FDB"
+                                                    FontSize="13"
+                                                    HorizontalOptions="Start"
+                                                    Padding="0" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding ToCurrency}" />
+                                            <Label Text="{Binding ResultLabel}" FontSize="13" TextColor="#17243A" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="White"
+                        Stroke="#D9DEE7"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 4"
+                        Padding="18">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding ReverseTableHeading}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#17243A" />
+                        <Grid ColumnDefinitions="*,*">
+                            <Label Text="{Binding ToCodeHeader}" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                            <Label Grid.Column="1" Text="{Binding FromCodeHeader}" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="#D9DEE7" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ReverseConversions}" Spacing="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,*" Padding="0,6">
+                                        <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding FromCurrency}" />
+                                            <Button Text="{Binding AmountLabel}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectConversionCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Transparent"
+                                                    TextColor="#315FDB"
+                                                    FontSize="13"
+                                                    HorizontalOptions="Start"
+                                                    Padding="0" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding ToCurrency}" />
+                                            <Label Text="{Binding ResultLabel}" FontSize="13" TextColor="#17243A" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Live rates and popular conversions -->
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="28">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Live Rates"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#17243A" />
+                    <Grid ColumnDefinitions="*,*"
+                          Padding="0,0,0,8">
+                        <Label Text="Pair" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                        <Label Grid.Column="1" Text="Indicative rate" FontSize="12" FontAttributes="Bold" TextColor="#53627A" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#D9DEE7" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding LiveRates}" Spacing="0">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,*" Padding="0,8">
+                                    <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                        <views:CurrencyIcon Currency="{Binding FromCurrency}" />
+                                        <Label Text="{Binding FromCurrency.Code}" FontSize="14" TextColor="#315FDB" />
+                                        <Label Text="/" FontSize="14" TextColor="#8994A5" />
+                                        <views:CurrencyIcon Currency="{Binding ToCurrency}" />
+                                        <Label Text="{Binding ToCurrency.Code}" FontSize="14" TextColor="#315FDB" />
+                                    </HorizontalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding Rate}" FontSize="14" TextColor="#17243A" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Label Text="Rates use the selected base currency and available live feeds."
+                           FontSize="11"
+                           TextColor="#788496"
+                           LineBreakMode="WordWrap"
+                           MaxLines="2"
+                           HorizontalOptions="Fill" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="12">
+                    <Label Text="Popular conversions"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#17243A" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding PopularConversions}"
+                                         Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="*,*"
+                                      ColumnSpacing="8">
+                                    <Border Stroke="#D9DEE7"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 2"
+                                            Padding="8,10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectPopularConversionCommand}"
+                                                CommandParameter="{Binding LeftTargetCode}" />
+                                        </Border.GestureRecognizers>
+                                        <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding BaseCurrency}" />
+                                            <Label Text="{Binding BaseCurrency.Code}" FontSize="12" TextColor="#17243A" />
+                                            <Label Text="to" FontSize="12" TextColor="#65738A" />
+                                            <views:CurrencyIcon Currency="{Binding LeftCurrency}" />
+                                            <Label Text="{Binding LeftTargetCode}" FontSize="12" TextColor="#17243A" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="1"
+                                            IsVisible="{Binding HasRightConversion}"
+                                            Stroke="#D9DEE7"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 2"
+                                            Padding="8,10">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectPopularConversionCommand}"
+                                                CommandParameter="{Binding RightTargetCode}" />
+                                        </Border.GestureRecognizers>
+                                        <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                            <views:CurrencyIcon Currency="{Binding BaseCurrency}" />
+                                            <Label Text="{Binding BaseCurrency.Code}" FontSize="12" TextColor="#17243A" />
+                                            <Label Text="to" FontSize="12" TextColor="#65738A" />
+                                            <views:CurrencyIcon Currency="{Binding RightCurrency}" />
+                                            <Label Text="{Binding RightTargetCode}" FontSize="12" TextColor="#17243A" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+
+            <VerticalStackLayout Spacing="24">
+                <Label Text="Major Currencies"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="#17243A" />
+                <Grid ColumnDefinitions="*,*,*"
+                      ColumnSpacing="20">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding OtherCurrenciesColumnOne}"
+                                         Spacing="12">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <HorizontalStackLayout Spacing="5"
+                                                       VerticalOptions="Center">
+                                    <HorizontalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectOtherCurrencyCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout.GestureRecognizers>
+                                    <views:CurrencyIcon Currency="{Binding .}" />
+                                    <Label Text="{Binding Code}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding FindOtherCurrencyLabel}"
+                                           TextColor="#315FDB"
+                                           FontSize="14"
+                                           TextDecorations="Underline"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1"
+                                         BindableLayout.ItemsSource="{Binding OtherCurrenciesColumnTwo}"
+                                         Spacing="12">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <HorizontalStackLayout Spacing="5"
+                                                       VerticalOptions="Center">
+                                    <HorizontalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectOtherCurrencyCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout.GestureRecognizers>
+                                    <views:CurrencyIcon Currency="{Binding .}" />
+                                    <Label Text="{Binding Code}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding FindOtherCurrencyLabel}"
+                                           TextColor="#315FDB"
+                                           FontSize="14"
+                                           TextDecorations="Underline"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="2"
+                                         BindableLayout.ItemsSource="{Binding OtherCurrenciesColumnThree}"
+                                         Spacing="12">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <HorizontalStackLayout Spacing="5"
+                                                       VerticalOptions="Center">
+                                    <HorizontalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectOtherCurrencyCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout.GestureRecognizers>
+                                    <views:CurrencyIcon Currency="{Binding .}" />
+                                    <Label Text="{Binding Code}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding FindOtherCurrencyLabel}"
+                                           TextColor="#315FDB"
+                                           FontSize="14"
+                                           TextDecorations="Underline"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+
+            <Label Text="{Binding HistoryFooter}"
+                   FontSize="11"
+                   TextColor="#788496"
+                   HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid IsVisible="{Binding IsCurrencySelectorOpen}"
+              ZIndex="10">
+            <BoxView Color="#660D1728" />
+            <Border BackgroundColor="White"
+                    Stroke="#D9DEE7"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="0"
+                    MaximumWidthRequest="520"
+                    MaximumHeightRequest="640"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Margin="20">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid Padding="20,16"
+                          ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding CurrencySelectorTitle}"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#17243A"
+                               VerticalOptions="Center" />
+                        <Button Grid.Column="1"
+                                Text="×"
+                                FontSize="24"
+                                Padding="8,0"
+                                BackgroundColor="Transparent"
+                                TextColor="#53627A"
+                                Command="{Binding CloseCurrencySelectorCommand}" />
+                    </Grid>
+                    <CollectionView Grid.Row="1"
+                                    x:Name="CurrencyOptions"
+                                    ItemsSource="{Binding AvailableCurrencies}"
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnCurrencySelectionChanged">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="16,9"
+                                      ColumnDefinitions="40,60,*"
+                                      ColumnSpacing="10">
+                                    <Grid WidthRequest="34"
+                                          HeightRequest="34"
+                                          VerticalOptions="Center">
+                                        <Border IsVisible="{Binding IsCrypto}"
+                                                BackgroundColor="{Binding CryptoBadgeColor}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 17"
+                                                WidthRequest="34"
+                                                HeightRequest="34">
+                                            <Label Text="{Binding CryptoSymbol}"
+                                                   TextColor="White"
+                                                   FontSize="19"
+                                                   FontAttributes="Bold"
+                                                   HorizontalTextAlignment="Center"
+                                                   VerticalTextAlignment="Center" />
+                                        </Border>
+                                        <Label IsVisible="{Binding HasNoCountryFlagImage}"
+                                               Text="{Binding CountryFlag}"
+                                               FontFamily="Segoe UI Emoji"
+                                               FontSize="27"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center" />
+                                        <Image IsVisible="{Binding IsFiat}"
+                                               Source="{Binding CountryFlagImageUrl}"
+                                               Aspect="AspectFit"
+                                               WidthRequest="34"
+                                               HeightRequest="25" />
+                                    </Grid>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Code}"
+                                           FontSize="15"
+                                           FontAttributes="Bold"
+                                           TextColor="#17243A"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="2"
+                                           Text="{Binding CurrencyLabel}"
+                                           FontSize="14"
+                                           TextColor="#53627A"
+                                           VerticalOptions="Center"
+                                           LineBreakMode="TailTruncation" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

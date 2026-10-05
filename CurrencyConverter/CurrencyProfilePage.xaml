@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:CurrencyConverter.Models"
+             xmlns:views="clr-namespace:CurrencyConverter.Views"
+             x:Class="CurrencyConverter.CurrencyProfilePage"
+             x:DataType="models:CurrencyProfile"
+             Title="Currency profile"
+             BackgroundColor="#FFFFFF">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,20"
+                             Spacing="18"
+                             MaximumWidthRequest="900"
+                             HorizontalOptions="Center">
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2"
+                                     VerticalOptions="Center">
+                    <Label Text="{Binding Heading}"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#17243A" />
+                    <Label Text="{Binding CountryName}"
+                           FontSize="14"
+                           TextColor="#65738A" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1"
+                        Text="Close"
+                        Clicked="OnCloseClicked"
+                        VerticalOptions="Start"
+                        BackgroundColor="Transparent"
+                        TextColor="#315FDB" />
+            </Grid>
+
+            <HorizontalStackLayout Spacing="8">
+                <views:CurrencyIcon Currency="{Binding CurrencyItem}" />
+                <Label Text="{Binding Code}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#17243A"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Description"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="#17243A" />
+                <Label Text="{Binding Description}"
+                       FontSize="13"
+                       TextColor="#35445B"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Economy"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="#17243A" />
+                <Label Text="{Binding EconomySummary}"
+                       FontSize="13"
+                       TextColor="#35445B"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="History"
+                       FontSize="14"
+                       FontAttributes="Bold"
+                       TextColor="#17243A" />
+                <Label Text="{Binding HistorySummary}"
+                       FontSize="13"
+                       TextColor="#35445B"
+                       LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <Border Stroke="#C9D0DB"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 2"
+                    Padding="14">
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="Currency profile"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="#17243A"
+                           Margin="0,0,0,8" />
+
+                    <Grid ColumnDefinitions="140,*"
+                          ColumnSpacing="12"
+                          Padding="0,8">
+                        <Label Text="Symbol" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Symbol}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Nicknames" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Nicknames}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="ISO 4217 code" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Code}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Central bank" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding CentralBank}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Currency subunit" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Subunit}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Denominations" FontSize="12" TextColor="#53627A" VerticalOptions="Center" />
+                        <Label Grid.Column="1" Text="{Binding Denominations}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Countries using this currency" FontSize="12" TextColor="#53627A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Label Grid.Column="1" Text="{Binding CountriesUsing}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="Currencies pegged to this currency" FontSize="12" TextColor="#53627A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Label Grid.Column="1" Text="{Binding CurrenciesPeggedTo}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                    </Grid>
+                    <BoxView HeightRequest="1" Color="#E2E6ED" />
+
+                    <Grid ColumnDefinitions="140,*" ColumnSpacing="12" Padding="0,8">
+                        <Label Text="This currency is pegged to" FontSize="12" TextColor="#53627A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                        <Label Grid.Column="1" Text="{Binding PeggedTo}" FontSize="12" TextColor="#17243A" VerticalOptions="Center" LineBreakMode="WordWrap" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

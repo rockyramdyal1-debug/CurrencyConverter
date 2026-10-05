@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:CurrencyConverter.Models"
+             x:Class="CurrencyConverter.Views.CurrencyIcon"
+             x:DataType="models:CurrencyItem"
+             WidthRequest="26"
+             HeightRequest="26">
+    <Grid WidthRequest="26" HeightRequest="26">
+        <Border IsVisible="{Binding IsCrypto}"
+                BackgroundColor="{Binding CryptoBadgeColor}"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 13"
+                WidthRequest="24"
+                HeightRequest="24"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+            <Label Text="{Binding CryptoSymbol}"
+                   TextColor="White"
+                   FontSize="15"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center" />
+        </Border>
+        <Image IsVisible="{Binding HasCountryFlagImage}"
+               Source="{Binding CountryFlagImageUrl}"
+               Aspect="AspectFit"
+               WidthRequest="26"
+               HeightRequest="18"
+               HorizontalOptions="Center"
+               VerticalOptions="Center" />
+        <Label IsVisible="{Binding HasNoCountryFlagImage}"
+               Text="{Binding CountryFlag}"
+               FontFamily="Segoe UI Emoji"
+               FontSize="21"
+               HorizontalTextAlignment="Center"
+               VerticalTextAlignment="Center" />
+    </Grid>
+</ContentView>
