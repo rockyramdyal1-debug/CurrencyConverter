@@ -1,5 +1,4 @@
 using CurrencyConverter.Models;
-using Microsoft.Maui.Graphics;
 
 namespace CurrencyConverter.Views;
 

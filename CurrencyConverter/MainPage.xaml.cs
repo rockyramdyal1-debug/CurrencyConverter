@@ -1,5 +1,5 @@
-﻿using CurrencyConverter.ViewModels;
-using CurrencyConverter.Models;
+﻿using CurrencyConverter.Models;
+using CurrencyConverter.ViewModels;
 
 namespace CurrencyConverter
 {

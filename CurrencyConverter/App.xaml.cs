@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace CurrencyConverter
+﻿namespace CurrencyConverter
 {
     public partial class App : Application
     {

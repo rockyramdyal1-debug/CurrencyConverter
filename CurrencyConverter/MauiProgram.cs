@@ -1,7 +1,5 @@
-﻿using CurrencyConverter;
-using CurrencyConverter.Services;
+﻿using CurrencyConverter.Services;
 using CurrencyConverter.ViewModels;
-using Microsoft.Extensions.Http;
 
 namespace CurrencyConverter;
 

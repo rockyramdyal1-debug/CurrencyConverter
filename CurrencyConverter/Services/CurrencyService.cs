@@ -1,5 +1,4 @@
 ﻿using CurrencyConverter.Models;
-using CurrencyConverter.Services;
 
 namespace CurrencyConverter.Services;
 
